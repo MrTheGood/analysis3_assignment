@@ -75,6 +75,17 @@ class Library:
             self.catalog.bookItems.remove(bookItem)
             self.loanAdministration.loanedItems.append(LoanItem(bookItem, customer))
 
+    def return_book(self, loanItem):
+        if self.loanAdministration.loanedItems.__contains__(loanItem):
+            self.loanAdministration.loanedItems.remove(loanItem)
+            self.catalog.bookItems.append(loanItem.book_item)
+
+    def restore_from_backup(self):
+        print("todo: restore backup")
+
+    def create_backup(self):
+        print("todo: create backup")
+
 
 class LoanAdministration:
     def __init__(self):
@@ -85,3 +96,75 @@ class Catalog:
     def __init__(self):
         self.bookItems = []
         self.knownBooks = []
+
+
+class Command:
+    def __init__(self, commandName, onCommand):
+        self.commandName = commandName
+        self.onCommand = onCommand
+
+
+if __name__ == '__main__':
+    library = Library()
+    print("Welcome to the HR Library system.")
+
+
+    def do_command(options):
+        while True:
+            command = input("type in your choice: \n")
+            for c in options:
+                if c.commandName == command:
+                    c.onCommand()
+                    return
+            print("Invalid option. Try again.")
+
+
+    enabled = True
+    while enabled:
+        def quit():
+            global enabled
+            enabled = False
+
+
+        def backup():
+            global library
+            commands = [
+                Command("restore", library.restore_from_backup),
+                Command("create", library.create_backup),
+            ]
+            print("You chose backup. What do you want to do now?\n" +
+                  ', '.join([c.commandName for c in commands]))
+            do_command(commands)
+
+
+        def book():
+            commands = [
+                Command("loan", None),
+                Command("return", None),
+                Command("search", None),
+                Command("add", None),
+            ]
+            print("You chose book. What do you want to do now?\n" +
+                  ', '.join([c.commandName for c in commands]))
+            do_command(commands)
+
+
+        def customer():
+            commands = [
+                Command("add", None),
+                Command("add_from_csv", None),
+            ]
+            print("You chose customer. What do you want to do now?\n" +
+                  ', '.join([c.commandName for c in commands]))
+            do_command(commands)
+
+
+        commands = [
+            Command("quit", quit),
+            Command("book", book),
+            Command("customer", customer),
+            Command("backup", backup),
+        ]
+        print("What do you want to do? You have the following options: \n" +
+              ', '.join([c.commandName for c in commands]))
+        do_command(commands)
