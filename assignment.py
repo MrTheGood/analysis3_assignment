@@ -8,8 +8,18 @@ class Person:
 
 
 class Costumer(Person):
-    def __init__(self, firstName, lastName):
-        super().__init__(firstName, lastName)
+    def __init__(self, firstName, lastName,gender,nameSet,streetAddress,zipCode,city,emailAddress,userName,telephoneNumber):
+        self.firstName = firstName
+        self.lastName = lastName
+        self.gender = gender
+        self.nameSet = nameSet
+        self.streetAddress = streetAddress
+        self.zipCode = zipCode
+        self.city = city
+        self.emailAddress = emailAddress
+        self.userName = userName
+        self.telephoneNumber = telephoneNumber
+        super().__init__(firstName, lastName, gender, nameSet, streetAddress, zipCode, city, emailAddress, userName, telephoneNumber)
 
 
 class Libarian(Person):
