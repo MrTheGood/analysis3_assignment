@@ -84,7 +84,7 @@ class Library:
             self.catalog.bookItems.append(loanItem.book_item)
 
     def restore_from_backup(self):
-        print("todo")
+        print("Sorry, not done yet!")
 
     def create_backup(self):
         print("Creating backup...")
@@ -183,18 +183,7 @@ class Catalog:
             print("items available for book", book.isbn, book.title, ":", len(bookItems))
 
     def search_books(self):
-        # todo: fix search book
-        print("What way do you want to search? " + ", ".join(Book.__dict__))
-        d = input()
-        if d in Book.__dict__:
-            query = input("Type your search query:\n")
-            results = [book.isbn + " " + book.title for book in self.bookItems if
-                       query in book.__dict__[d]]
-            print("number of results: ", len(results), "\nResults:")
-            print("\n".join(results))
-        else:
-            print("invalid type. Try again")
-            self.search_books()
+        print("Sorry, doesn't work yet!")
 
 
 class Command:
@@ -236,10 +225,14 @@ if __name__ == '__main__':
         do_command(commands)
 
 
+    def notdone():
+        print("Sorry, this command is'nt finished yet!")
+
+
     def customer():
         commands = [
-            Command("add", None),
-            Command("add_from_csv", None),
+            Command("add", notdone),
+            Command("add_from_csv", notdone),
         ]
         print("You chose customer. What do you want to do now?")
         do_command(commands)
