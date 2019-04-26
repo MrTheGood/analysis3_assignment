@@ -38,3 +38,27 @@ class Book:
 class BookItem(Book):
     def __init__(self, Author, isbn, country, link, pages, title, year, imagelink, language):
         super().__init__(Author, isbn, country, link, pages, title, year, imagelink, language)
+
+
+class LoanItem(BookItem):
+
+    def __init__(self, Author, isbn, country, link, pages, title, year, imagelink, language):
+        super().__init__(Author, isbn, country, link, pages, title, year, imagelink, language)
+
+
+class Library:
+    def __init__(self):
+        self.customers = ()
+        self.librarians = ()
+        self.catalog = Catalog()
+        self.loanAdministration = LoanAdministration()
+
+
+class LoanAdministration:
+    def __init__(self):
+        pass
+
+
+class Catalog:
+    def __init__(self):
+        pass
