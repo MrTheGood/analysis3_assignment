@@ -1,5 +1,6 @@
 class Person:
-    def __init__(self, firstName, lastName):
+    def __init__(self, number, firstName, lastName):
+        self.number = number
         self.firstName = firstName
         self.lastName = lastName
 
@@ -8,9 +9,9 @@ class Person:
 
 
 class Costumer(Person):
-    def __init__(self, firstName, lastName,gender,nameSet,streetAddress,zipCode,city,emailAddress,userName,telephoneNumber):
-        self.firstName = firstName
-        self.lastName = lastName
+    def __init__(self, number, firstName, lastName, gender, nameSet, streetAddress, zipCode, city,
+                 emailAddress, userName, telephoneNumber):
+        super().__init__(number, firstName, lastName)
         self.gender = gender
         self.nameSet = nameSet
         self.streetAddress = streetAddress
@@ -19,56 +20,68 @@ class Costumer(Person):
         self.emailAddress = emailAddress
         self.userName = userName
         self.telephoneNumber = telephoneNumber
-        super().__init__(firstName, lastName, gender, nameSet, streetAddress, zipCode, city, emailAddress, userName, telephoneNumber)
 
 
 class Libarian(Person):
-    def __init__(self, firstName, lastName):
-        super().__init__(firstName, lastName)
+    def __init__(self, number, firstName, lastName):
+        super().__init__(number, firstName, lastName)
 
 
 class Author(Person):
-    def __init__(self, firstName, lastName):
-        super().__init__(firstName, lastName)
+    def __init__(self, number, firstName, lastName):
+        super().__init__(number, firstName, lastName)
 
 
 class Book:
-    def __init__(self, Author, isbn, country, link, pages, title, year, imagelink, language):
-        self.Author = Author
+    def __init__(self, author, isbn, country, link, pages, title, year, image_link, language):
+        self.author = author
         self.isbn = isbn
         self.country = country
         self.link = link
         self.pages = pages
         self.title = title
         self.year = year
-        self.imagelink = imagelink
+        self.image_link = image_link
         self.language = language
 
 
-class BookItem(Book):
-    def __init__(self, Author, isbn, country, link, pages, title, year, imagelink, language):
-        super().__init__(Author, isbn, country, link, pages, title, year, imagelink, language)
+class BookItem:
+    def __init__(self, book):
+        self.book = book
 
 
-class LoanItem(BookItem):
+class LoanItem:
 
-    def __init__(self, Author, isbn, country, link, pages, title, year, imagelink, language):
-        super().__init__(Author, isbn, country, link, pages, title, year, imagelink, language)
+    def __init__(self, book_item, customer):
+        self.book_item = book_item
+        self.customer = customer
 
 
 class Library:
     def __init__(self):
-        self.customers = ()
-        self.librarians = ()
+        self.customers = []
+        self.librarians = []
         self.catalog = Catalog()
         self.loanAdministration = LoanAdministration()
+
+    def add_customer(self, customer):
+        self.customers.append(customer)
+
+    def add_book_item(self, book):
+        self.catalog.bookItems.append(BookItem(book))
+
+    def loan_book(self, bookItem, customer):
+        if self.catalog.bookItems.__contains__(bookItem):
+            self.catalog.bookItems.remove(bookItem)
+            self.loanAdministration.loanedItems.append(LoanItem(bookItem, customer))
 
 
 class LoanAdministration:
     def __init__(self):
-        pass
+        self.loanedItems = []
 
 
 class Catalog:
     def __init__(self):
-        pass
+        self.bookItems = []
+        self.knownBooks = []
