@@ -8,8 +8,17 @@ class Person:
 
 
 class Costumer(Person):
-    def __init__(self):
-
+    def __init__(self,gender,nameSet,firstName,lastName,streetAddress,zipCode,city,emailAddress,userName,telephoneNumber):
+        self.gender = gender
+        self.nameSet = nameSet
+        self.firstName = firstName
+        self.lastName = lastName
+        self.streetAddress = streetAddress
+        self.zipCode = zipCode
+        self.city = city
+        self.emailAddress = emailAddress
+        self.userName = userName
+        self.telephoneNumber = telephoneNumber
 
 class Libarian(Person):
     def __init__(self):
