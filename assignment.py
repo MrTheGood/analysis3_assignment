@@ -3,8 +3,8 @@ class Person:
         self.firstName = firstName
         self.lastName = lastName
 
-    def fullName:
-            return firstName + lastName
+    def getFullName(self):
+        return self.firstName + " " + self.lastName
 
 
 class Costumer(Person):
