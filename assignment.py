@@ -1,3 +1,6 @@
+import json
+
+
 class Person:
     def __init__(self, number, firstName, lastName):
         self.number = number
@@ -81,10 +84,12 @@ class Library:
             self.catalog.bookItems.append(loanItem.book_item)
 
     def restore_from_backup(self):
-        print("todo: restore backup")
+        print("todo")
 
     def create_backup(self):
-        print("todo: create backup")
+        print("Creating backup...")
+        json.dump(self, open('backup.json', 'w'), default=lambda o: o.__dict__)
+        print("Backup done!")
 
 
 class LoanAdministration:
@@ -96,6 +101,100 @@ class Catalog:
     def __init__(self):
         self.bookItems = []
         self.knownBooks = []
+
+    def enter(self):
+        print("Welcome to the book catalog. What do you want to do?")
+        commands = [
+            Command("add_book", self.add_book),
+            Command("add_book_item", self.add_book_item),
+            Command("show_known_books", self.show_known_books),
+            Command("show_available_books", self.show_available_books),
+            Command("search_books", self.search_books),
+        ]
+        do_command(commands)
+
+    def add_book(self):
+        print("Please enter all information for the book you want to add:")
+        book = Book(
+            self.select_author(),
+            input("Book isbn: "),
+            input("country: "),
+            input("link: "),
+            input("pages: "),
+            input("title: "),
+            input("year: "),
+            input("image_link: "),
+            input("language: ")
+        )
+        self.knownBooks.append(book)
+        print("Added!")
+        return book
+
+    def add_book_item(self):
+        while True:
+            print("Known books:", len(self.knownBooks))
+            print("\n".join([book.title for book in self.knownBooks]))
+            title = input("Type the full title of your book:\n")
+            for book in self.knownBooks:
+                if title == book.title:
+                    print("You chose ", title)
+                    self.bookItems.append(BookItem(book))
+                    return book
+
+            add = input(
+                "Book with title " + title + " not found. Do you want to add them? (y/n) ") == "y"
+            if add:
+                book = self.add_book()
+                self.bookItems.append(BookItem(book))
+                print("Added!")
+                return book
+            print("Try again.")
+
+    def select_author(self):
+        while True:
+            authors = {book.author for book in self.knownBooks}
+            print("Available authors:", len(authors))
+            print("\n".join([author.getFullName() for author in authors]))
+            name = input("Type the full name of your author:\n")
+
+            for author in authors:
+                if name == author.getFullName():
+                    print("You chose", name)
+                    return author
+
+            add = input(
+                "Author with name " + name + " not found. Do you want to add them? (y/n) ") == "y"
+            if add:
+                author = Author(input("Give a number for the author: \n"), name.split(" ")[0],
+                                " ".join(name.split(" ")[1:]))
+                print("You chose", author.getFullName())
+                return author
+            print("Try again.")
+
+    def show_known_books(self):
+        print("Known books:", len(self.knownBooks))
+        for book in self.knownBooks:
+            print(book.isbn, book.title)
+
+    def show_available_books(self):
+        print("Available books:", len(self.bookItems))
+        for book in self.knownBooks:
+            bookItems = [bookItem for bookItem in self.bookItems if bookItem.book.isbn == book.isbn]
+            print("items available for book", book.isbn, book.title, ":", len(bookItems))
+
+    def search_books(self):
+        # todo: fix search book
+        print("What way do you want to search? " + ", ".join(Book.__dict__))
+        d = input()
+        if d in Book.__dict__:
+            query = input("Type your search query:\n")
+            results = [book.isbn + " " + book.title for book in self.bookItems if
+                       query in book.__dict__[d]]
+            print("number of results: ", len(results), "\nResults:")
+            print("\n".join(results))
+        else:
+            print("invalid type. Try again")
+            self.search_books()
 
 
 class Command:
@@ -111,60 +210,45 @@ if __name__ == '__main__':
 
     def do_command(options):
         while True:
+            print("These are your options: back, " +
+                  ', '.join([c.commandName for c in options]))
             command = input("type in your choice: \n")
+            found = False
             for c in options:
+                if command == "back":
+                    return
                 if c.commandName == command:
                     c.onCommand()
-                    return
-            print("Invalid option. Try again.")
+                    input("Press enter to continue.\n")
+                    found = True
+                    break
+            if not found:
+                print("Invalid option. Try again.")
 
 
-    enabled = True
-    while enabled:
-        def quit():
-            global enabled
-            enabled = False
-
-
-        def backup():
-            global library
-            commands = [
-                Command("restore", library.restore_from_backup),
-                Command("create", library.create_backup),
-            ]
-            print("You chose backup. What do you want to do now?\n" +
-                  ', '.join([c.commandName for c in commands]))
-            do_command(commands)
-
-
-        def book():
-            commands = [
-                Command("loan", None),
-                Command("return", None),
-                Command("search", None),
-                Command("add", None),
-            ]
-            print("You chose book. What do you want to do now?\n" +
-                  ', '.join([c.commandName for c in commands]))
-            do_command(commands)
-
-
-        def customer():
-            commands = [
-                Command("add", None),
-                Command("add_from_csv", None),
-            ]
-            print("You chose customer. What do you want to do now?\n" +
-                  ', '.join([c.commandName for c in commands]))
-            do_command(commands)
-
-
+    def backup():
+        global library
         commands = [
-            Command("quit", quit),
-            Command("book", book),
-            Command("customer", customer),
-            Command("backup", backup),
+            Command("restore", library.restore_from_backup),
+            Command("create", library.create_backup),
         ]
-        print("What do you want to do? You have the following options: \n" +
-              ', '.join([c.commandName for c in commands]))
+        print("You chose backup. What do you want to do now?")
         do_command(commands)
+
+
+    def customer():
+        commands = [
+            Command("add", None),
+            Command("add_from_csv", None),
+        ]
+        print("You chose customer. What do you want to do now?")
+        do_command(commands)
+
+
+    commands = [
+        Command("catalog", library.catalog.enter),
+        Command("customer", customer),
+        Command("backup", backup),
+    ]
+    print("What do you want to do?")
+    do_command(commands)
