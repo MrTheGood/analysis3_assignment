@@ -1,5 +1,5 @@
 class Person:
-    def __init__(self,firstName,lastName):
+    def __init__(self, firstName, lastName):
         self.firstName = firstName
         self.lastName = lastName
 
@@ -8,19 +8,22 @@ class Person:
 
 
 class Costumer(Person):
-    def __init__(self):
+    def __init__(self, firstName, lastName):
+        super().__init__(firstName, lastName)
 
 
 class Libarian(Person):
-    def __init__(self):
+    def __init__(self, firstName, lastName):
+        super().__init__(firstName, lastName)
 
 
 class Author(Person):
-    def __init__(self):
+    def __init__(self, firstName, lastName):
+        super().__init__(firstName, lastName)
 
 
 class Book:
-    def __init__(self,Author,isbn,country,link,pages,title, year,imagelink,language):
+    def __init__(self, Author, isbn, country, link, pages, title, year, imagelink, language):
         self.Author = Author
         self.isbn = isbn
         self.country = country
@@ -31,5 +34,7 @@ class Book:
         self.imagelink = imagelink
         self.language = language
 
+
 class BookItem(Book):
-    def __init__(self):
+    def __init__(self, Author, isbn, country, link, pages, title, year, imagelink, language):
+        super().__init__(Author, isbn, country, link, pages, title, year, imagelink, language)
