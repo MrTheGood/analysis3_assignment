@@ -1,65 +1,6 @@
 import json
 
 
-class Person:
-    def __init__(self, number, first_name, last_name):
-        self.number = number
-        self.first_name = first_name
-        self.last_name = last_name
-
-    def get_full_name(self):
-        return self.first_name + " " + self.last_name
-
-
-class Costumer(Person):
-    def __init__(self, number, first_name, last_name, gender, name_set, street_address, zip_code,
-                 city, email_address, user_name, telephone_number):
-        super().__init__(number, first_name, last_name)
-        self.gender = gender
-        self.name_set = name_set
-        self.street_address = street_address
-        self.zip_code = zip_code
-        self.city = city
-        self.email_address = email_address
-        self.user_name = user_name
-        self.telephone_number = telephone_number
-
-
-class Librarian(Person):
-    def __init__(self, number, first_name, last_name):
-        super().__init__(number, first_name, last_name)
-
-
-class Author(Person):
-    def __init__(self, number, first_name, last_name):
-        super().__init__(number, first_name, last_name)
-
-
-class Book:
-    def __init__(self, author, isbn, country, link, pages, title, year, image_link, language):
-        self.author = author
-        self.isbn = isbn
-        self.country = country
-        self.link = link
-        self.pages = pages
-        self.title = title
-        self.year = year
-        self.image_link = image_link
-        self.language = language
-
-
-class BookItem:
-    def __init__(self, book):
-        self.book = book
-
-
-class LoanItem:
-
-    def __init__(self, book_item, customer):
-        self.book_item = book_item
-        self.customer = customer
-
-
 class Library:
     def __init__(self):
         self.librarians = []
@@ -91,43 +32,6 @@ class Library:
         json.dump(self, open('backup.json', 'w'), default=lambda o: o.__dict__)
         print("Backup done!")
         print("You can find the backup in backup.json")
-
-
-class LoanAdministration:
-    def __init__(self):
-        self.loanedItems = []
-        self.customers = []
-
-    def enter(self):
-        commands = [
-            Command("add", self.add_customer),
-            Command("add_from_csv", self.load_customers),
-            Command("loan_book", self.loan_book),
-            Command("show_available_books", self.show_available_books),
-        ]
-        print("You chose loan_administration. What do you want to do now?")
-        do_command("Library/loan_administration", commands)
-
-    def add_customer(self):
-        # todo: add customer
-        pass
-
-    def load_customers(self):
-        # todo: load customers from csv
-        pass
-
-    def loan_book(self):
-        # todo: loan a book
-        pass
-
-    # TODO: take into account loans
-    def show_available_books(self):
-        book_items = library.catalog.book_items
-        known_books = library.catalog.known_books
-        print("Available books:", len(book_items))
-        for book in known_books:
-            book_items = [book_item for book_item in book_items if book_item.book.isbn == book.isbn]
-            print("items available for book", book.isbn, book.title, ":", len(book_items))
 
 
 class Catalog:
@@ -227,6 +131,102 @@ class Catalog:
                 print(book.isbn + " " + book.title + ", number of copies: " + len(book_items))
         if not found:
             print("No books found.")
+
+
+class LoanAdministration:
+    def __init__(self):
+        self.loanedItems = []
+        self.customers = []
+
+    def enter(self):
+        commands = [
+            Command("add", self.add_customer),
+            Command("add_from_csv", self.load_customers),
+            Command("loan_book", self.loan_book),
+            Command("show_available_books", self.show_available_books),
+        ]
+        print("You chose loan_administration. What do you want to do now?")
+        do_command("Library/loan_administration", commands)
+
+    def add_customer(self):
+        # todo: add customer
+        pass
+
+    def load_customers(self):
+        # todo: load customers from csv
+        pass
+
+    def loan_book(self):
+        # todo: loan a book
+        pass
+
+    # TODO: take into account loans
+    def show_available_books(self):
+        book_items = library.catalog.book_items
+        known_books = library.catalog.known_books
+        print("Available books:", len(book_items))
+        for book in known_books:
+            book_items = [book_item for book_item in book_items if book_item.book.isbn == book.isbn]
+            print("items available for book", book.isbn, book.title, ":", len(book_items))
+
+
+class Person:
+    def __init__(self, number, first_name, last_name):
+        self.number = number
+        self.first_name = first_name
+        self.last_name = last_name
+
+    def get_full_name(self):
+        return self.first_name + " " + self.last_name
+
+
+class Costumer(Person):
+    def __init__(self, number, first_name, last_name, gender, name_set, street_address, zip_code,
+                 city, email_address, user_name, telephone_number):
+        super().__init__(number, first_name, last_name)
+        self.gender = gender
+        self.name_set = name_set
+        self.street_address = street_address
+        self.zip_code = zip_code
+        self.city = city
+        self.email_address = email_address
+        self.user_name = user_name
+        self.telephone_number = telephone_number
+
+
+class Librarian(Person):
+    def __init__(self, number, first_name, last_name):
+        super().__init__(number, first_name, last_name)
+
+
+class Author(Person):
+    def __init__(self, number, first_name, last_name):
+        super().__init__(number, first_name, last_name)
+
+
+class Book:
+    def __init__(self, author, isbn, country, link, pages, title, year, image_link, language):
+        self.author = author
+        self.isbn = isbn
+        self.country = country
+        self.link = link
+        self.pages = pages
+        self.title = title
+        self.year = year
+        self.image_link = image_link
+        self.language = language
+
+
+class BookItem:
+    def __init__(self, book):
+        self.book = book
+
+
+class LoanItem:
+
+    def __init__(self, book_item, customer):
+        self.book_item = book_item
+        self.customer = customer
 
 
 class Command:
