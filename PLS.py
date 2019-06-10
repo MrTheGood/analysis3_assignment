@@ -140,8 +140,8 @@ class LoanAdministration:
 
     def enter(self):
         commands = [
-            Command("add", self.add_customer),
-            Command("add_from_csv", self.load_customers),
+            Command("add_customer", self.add_customer),
+            Command("add_customers_rom_csv", self.load_customers),
             Command("loan_book", self.loan_book),
             Command("show_available_books", self.show_available_books),
         ]
@@ -164,7 +164,7 @@ class LoanAdministration:
     def show_available_books(self):
         book_items = library.catalog.book_items
         known_books = library.catalog.known_books
-        print("Available books:", len(book_items))
+        print("Available book items:", len(book_items))
         for book in known_books:
             book_items = [book_item for book_item in book_items if book_item.book.isbn == book.isbn]
             print("items available for book", book.isbn, book.title, ":", len(book_items))
