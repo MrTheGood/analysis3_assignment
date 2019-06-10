@@ -236,11 +236,6 @@ class Command:
 
 
 if __name__ == '__main__':
-    library = Library()
-    print("Welcome to the HR Library system.")
-    library.enter()
-
-
     def do_command(current_command, options):
         while True:
             print("You are in " + current_command)
@@ -258,3 +253,8 @@ if __name__ == '__main__':
                     break
             if not found:
                 print("Invalid option. Try again.")
+
+
+    library = Library()
+    print("Welcome to the HR Library system.")
+    library.enter()
