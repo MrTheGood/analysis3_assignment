@@ -62,13 +62,9 @@ class LoanItem:
 
 class Library:
     def __init__(self):
-        self.customers = []
         self.librarians = []
         self.catalog = Catalog()
         self.loanAdministration = LoanAdministration()
-
-    def add_customer(self, customer):
-        self.customers.append(customer)
 
     def add_book_item(self, book):
         self.catalog.bookItems.append(BookItem(book))
@@ -90,11 +86,35 @@ class Library:
         print("Creating backup...")
         json.dump(self, open('backup.json', 'w'), default=lambda o: o.__dict__)
         print("Backup done!")
+        print("You can find the backup in backup.json")
 
 
 class LoanAdministration:
     def __init__(self):
         self.loanedItems = []
+        self.customers = []
+
+    def add_customer(self, customer):
+        self.customers.append(customer)
+
+    def enter(self):
+        print("")
+
+    def add_customer(self):
+        # todo: add customer
+        pass
+
+    def load_customers(self):
+        # todo: load customers from csv
+        pass
+
+    def loan_item(self):
+        # todo: loan a book
+        pass
+
+    def check_availability(self):
+        # todo: check availability of book item
+        pass
 
 
 class Catalog:
@@ -111,7 +131,7 @@ class Catalog:
             Command("show_available_books", self.show_available_books),
             Command("search_books", self.search_books),
         ]
-        do_command(commands)
+        do_command("Library/catalog", commands)
 
     def add_book(self):
         print("Please enter all information for the book you want to add:")
@@ -139,6 +159,7 @@ class Catalog:
                 if title == book.title:
                     print("You chose ", title)
                     self.bookItems.append(BookItem(book))
+                    print("A book item has been added.")
                     return book
 
             add = input(
@@ -183,7 +204,16 @@ class Catalog:
             print("items available for book", book.isbn, book.title, ":", len(bookItems))
 
     def search_books(self):
-        print("Sorry, doesn't work yet!")
+        title = input("Type the title of the book:\n")
+        print("Found books:")
+
+        found = False
+        for book in self.knownBooks:
+            if title in book.title:
+                found = True
+                print(book.isbn + " " + book.title)
+        if not found:
+            print("No books found.")
 
 
 class Command:
@@ -197,8 +227,9 @@ if __name__ == '__main__':
     print("Welcome to the HR Library system.")
 
 
-    def do_command(options):
+    def do_command(current_command, options):
         while True:
+            print("You are in " + current_command)
             print("These are your options: back, " +
                   ', '.join([c.commandName for c in options]))
             command = input("type in your choice: \n")
@@ -222,7 +253,7 @@ if __name__ == '__main__':
             Command("create", library.create_backup),
         ]
         print("You chose backup. What do you want to do now?")
-        do_command(commands)
+        do_command("Library/backup", commands)
 
 
     def notdone():
@@ -231,11 +262,11 @@ if __name__ == '__main__':
 
     def customer():
         commands = [
-            Command("add", notdone),
-            Command("add_from_csv", notdone),
+            Command("add", notdone),  # todo: add customers
+            Command("add_from_csv", notdone),  # todo: add customers from csv
         ]
         print("You chose customer. What do you want to do now?")
-        do_command(commands)
+        do_command("Library/customer", commands)
 
 
     commands = [
@@ -244,4 +275,4 @@ if __name__ == '__main__':
         Command("backup", backup),
     ]
     print("What do you want to do?")
-    do_command(commands)
+    do_command("Library", commands)
