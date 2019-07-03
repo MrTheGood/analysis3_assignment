@@ -1,155 +1,60 @@
-import json
+import json, csv, datetime
 
 
 class Library:
+    id = 0
+
+    @staticmethod
+    def generate_id():
+        Library.id += 1
+        return Library.id
+
     def __init__(self):
         self.librarians = []
         self.catalog = Catalog()
         self.loan_administration = LoanAdministration()
 
-    def enter(self):
-        commands = [
-            Command("catalog", self.catalog.enter),
-            Command("loan_administration", self.loan_administration.enter),
-            Command("backup", self.backup),
-        ]
-        print("What do you want to do?")
-        do_command("Library", commands)
+        # TODO: load books from json on startup
+        # TODO: load customers from csv on startup
 
-    def backup(self):
-        commands = [
-            Command("restore", self.restore_from_backup),
-            Command("create", self.create_backup),
-        ]
-        print("You chose backup. Do you want to restore or delete??")
-        do_command("Library/backup", commands)
-
-    # Todo
     def restore_from_backup(self):
+        # Todo
         print("Sorry, not done yet!")
 
     def create_backup(self):
-        print("Creating backup...")
         json.dump(self, open('backup.json', 'w'), default=lambda o: o.__dict__)
-        print("Backup done!")
-        print("You can find the backup in backup.json")
 
 
 class Catalog:
     def __init__(self):
         self.book_items = []
-        self.known_books = []
+        self.books = []
 
-    def enter(self):
-        print("Welcome to the book catalog. What do you want to do?")
-        commands = [
-            Command("load_books", self.load_books),
-            Command("add_book", self.add_book),
-            Command("add_book_item", self.add_book_item),
-            Command("show_known_books", self.show_known_books),
-            Command("search_books", self.search_books),
-        ]
-        do_command("Library/catalog", commands)
-
-    # todo: load initial data or whatever
+    # todo: load initial data or whatever from json
     def load_books(self):
         pass
 
-    def add_book(self):
-        print("Please enter all information for the book you want to add:")
+    def add_book(self, title, authors):
         book = Book(
-            self.select_author(),
-            input("Book isbn: "),
-            input("country: "),
-            input("link: "),
-            input("pages: "),
-            input("title: "),
-            input("year: "),
-            input("image_link: "),
-            input("language: ")
+            title,
+            authors
         )
-        self.known_books.append(book)
-        print("Added book!")
+        self.books.append(book)
         return book
 
-    def select_author(self):
-        while True:
-            authors = {book.author for book in self.known_books}
-            print("Available authors:", len(authors))
-            print("\n".join([author.get_full_name() for author in authors]))
-            name = input("Type the full name of your author:\n")
+    def add_book_item(self, book):
+        book_item = BookItem(book)
+        self.book_items.append(book_item)
+        return book_item
 
-            for author in authors:
-                if name == author.get_full_name():
-                    print("You chose", name)
-                    return author
-
-            add = input(
-                "Author with name " + name + " not found. Do you want to add them? (y/n) ") == "y"
-            if add:
-                author = Author(input("Give a number for the author: \n"), name.split(" ")[0],
-                                " ".join(name.split(" ")[1:]))
-                print("You chose", author.get_full_name())
-                return author
-            print("Try again.")
-
-    def select_book_item(self):
-        while True:
-            library.loan_administration.show_available_books()
-            title = input("Type the full title of your book item:\n")
-            for book in library.catalog.book_items:
-                if title == book.book.title:
-                    print("You chose item ", title)
-                    return book
-
-            add = input(
-                "Book item with title " + title + " not found. Do you want to add them? (y/n) ") == "y"
-            if add:
-                book_item = self.add_book_item()
-                return book_item
-            print("Try again.")
-
-    def add_book_item(self):
-        while True:
-            print("Known books:", len(self.known_books))
-            print("\n".join([book.title for book in self.known_books]))
-            title = input("Type the full title of your book:\n")
-            for book in self.known_books:
-                if title == book.title:
-                    print("You chose ", title)
-                    book_item = BookItem(book)
-                    self.book_items.append(book_item)
-                    print("A book item has been added.")
-                    return book_item
-
-            add = input(
-                "Book with title " + title + " not found. Do you want to add them? (y/n) ") == "y"
-            if add:
-                book = self.add_book()
-                book_item = BookItem(book)
-                self.book_items.append(book_item)
-                print("Added book item!")
-                return book_item
-            print("Try again.")
-
-    def show_known_books(self):
-        print("Known books:", len(self.known_books))
-        for book in self.known_books:
-            print(book.isbn, book.title)
-
-    def search_books(self):
-        title = input("Type the title of the book:\n")
-        print("Found books:")
-
-        found = False
-        for book in self.known_books:
+    def search_books(self, title):
+        available_book_items = []
+        for book in self.books:
             if title in book.title:
-                found = True
-                book_items = [book_item for book_item in self.book_items if
-                              book_item.book.isbn == book.isbn]
-                print(book.isbn + " " + book.title + ", number of copies: " + len(book_items))
-        if not found:
-            print("No books found.")
+                for item in self.book_items:
+                    if library.loan_administration.check_available(item):
+                        available_book_items.append(item)
+        return available_book_items
 
 
 class LoanAdministration:
@@ -157,163 +62,79 @@ class LoanAdministration:
         self.loaned_items = []
         self.customers = []
 
-    def enter(self):
-        commands = [
-            Command("add_customer", self.add_customer),
-            Command("add_customers_rom_csv", self.load_customers),
-            Command("loan_book", self.loan_book),
-            Command("show_available_books", self.show_available_books),
-        ]
-        print("You chose loan_administration. What do you want to do now?")
-        do_command("Library/loan_administration", commands)
-
-    def add_customer(self):
-        print("Please enter all information for the customer you want to add:")
-        customer = Customer(
-            input("customer number: "),
-            input("first name: "),
-            input("last_name: "),
-            input("gender: "),
-            input("name_set: "),
-            input("street_address: "),
-            input("zip_code: "),
-            input("city: "),
-            input("email address: "),
-            input("user name: "),
-            input("telephone number: ")
-        )
+    def add_customer(self, first_name, last_name, **kwargs):
+        customer = Customer(first_name, last_name, **kwargs)
         self.customers.append(customer)
-        print("Added customer!")
         return customer
 
     def load_customers(self):
         # todo: load customers from csv
         pass
 
-    def loan_book(self):
-        customer = self.select_customer()
-        book_item = library.catalog.select_book_item()
+    def check_available(self, book_item):
+        for item in self.loaned_items:
+            if item.book_item.id == book_item.id:
+                return False
+        return True
+
+    def loan_book(self, customer, book_item):
+        if not self.check_available(book_item):
+            return False
 
         loan_item = LoanItem(book_item, customer)
         self.loaned_items.append(loan_item)
-        print("Customer ", customer.get_full_name(), " loaned book item ", book_item.book.title)
-
-    def select_customer(self):
-        while True:
-            print("What is your name?")
-            print("\n".join([customer.get_full_name() for customer in self.customers]))
-            name = input("Type your full name:\n")
-            for customer in self.customers:
-                if customer.get_full_name() == name:
-                    print("Hello, ", name)
-                    return customer
-
-            add = input(
-                "Customer with name " + name + " not found. Want to register? (y/n) ") == "y"
-            if add:
-                customer = self.add_customer()
-                return customer
-            print("Try again.")
-
-    def show_available_books(self):
-        book_items = library.catalog.book_items
-        known_books = library.catalog.known_books
-        loaned_items = self.loaned_items
-
-        print("Available book items:", len(book_items) - len(loaned_items))
-        for book in known_books:
-            book_items = [book_item for book_item in book_items if book_item.book.isbn == book.isbn]
-            loaned_items = [loaned_item for loaned_item in loaned_items if
-                            loaned_item.book_item.book.isbn == book.isbn]
-            print("items available for book", book.isbn, book.title, ":",
-                  len(book_items) - len(loaned_items))
+        return True
 
 
 class Person:
-    def __init__(self, number, first_name, last_name):
-        self.number = number
+    def __init__(self, first_name, last_name, **kwargs):
+        self.id = Library.generate_id()
         self.first_name = first_name
         self.last_name = last_name
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
 
 
 class Customer(Person):
-    def __init__(self, number, first_name, last_name, gender, name_set, street_address, zip_code,
-                 city, email_address, user_name, telephone_number):
-        super().__init__(number, first_name, last_name)
-        self.gender = gender
-        self.name_set = name_set
-        self.street_address = street_address
-        self.zip_code = zip_code
-        self.city = city
-        self.email_address = email_address
-        self.user_name = user_name
-        self.telephone_number = telephone_number
+    def __init__(self, first_name, last_name, **kwargs):
+        super().__init__(first_name, last_name, **kwargs)
 
 
 class Librarian(Person):
-    def __init__(self, number, first_name, last_name):
-        super().__init__(number, first_name, last_name)
+    def __init__(self, first_name, last_name, **kwargs):
+        super().__init__(first_name, last_name, **kwargs)
 
 
 class Author(Person):
-    def __init__(self, number, first_name, last_name):
-        super().__init__(number, first_name, last_name)
+    def __init__(self, first_name, last_name, **kwargs):
+        super().__init__(first_name, last_name, **kwargs)
 
 
 class Book:
-    def __init__(self, author, isbn, country, link, pages, title, year, image_link, language):
-        self.author = author
-        self.isbn = isbn
-        self.country = country
-        self.link = link
-        self.pages = pages
+    def __init__(self, title, authors, **kwargs):
+        self.id = Library.generate_id()
         self.title = title
-        self.year = year
-        self.image_link = image_link
-        self.language = language
+        self.authors = authors
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
 
 
 class BookItem:
     def __init__(self, book):
+        self.id = Library.generate_id()
         self.book = book
 
 
 class LoanItem:
-
     def __init__(self, book_item, customer):
+        self.id = Library.generate_id()
         self.book_item = book_item
         self.customer = customer
-
-
-class Command:
-    def __init__(self, command_name, on_command):
-        self.command_name = command_name
-        self.on_command = on_command
+        self.return_date = datetime.date.today() + datetime.timedelta(weeks=3)
 
 
 if __name__ == '__main__':
-    def do_command(current_command, options):
-        while True:
-            print("You are in " + current_command)
-            print("These are your options: back, " +
-                  ', '.join([c.command_name for c in options]))
-            command = input("type in your choice: \n")
-            found = False
-            for c in options:
-                if command == "back":
-                    return
-                if c.command_name == command:
-                    c.on_command()
-                    input("Press enter to continue.\n")
-                    found = True
-                    break
-            if not found:
-                print("Invalid option. Try again.")
-
-
     library = Library()
-    print("Welcome to the HR Library system.")
-    library.enter()
