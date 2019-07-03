@@ -180,7 +180,6 @@ if __name__ == '__main__':
     print("Restored backup")
     print("Loan items count:", len(library.loan_administration.loaned_items))
 
-    # Todo: make sure works
     print("\n-------------––------------")
     print("Adding a book:")
     print("Known books count:", len(library.catalog.books))
@@ -188,7 +187,6 @@ if __name__ == '__main__':
     book = library.catalog.add_book("A Clash of Kings", [Author("George", "Martin")])
     print("Known books count:", len(library.catalog.books))
 
-    # Todo: make sure works
     print("\n-------------––------------")
     print("adding a book item:")
     print("Book item count:", len(library.catalog.book_items))
@@ -196,7 +194,6 @@ if __name__ == '__main__':
     book_item = library.catalog.add_book_item(book)
     print("Book item count:", len(library.catalog.book_items))
 
-    # Todo: make sure works
     print("\n-------------––------------")
     print("Adding a customer:")
     print("Customer count:", len(library.loan_administration.customers))
@@ -204,7 +201,6 @@ if __name__ == '__main__':
     customer = library.loan_administration.add_customer("David", "Hasselhof")
     print("Customer count:", len(library.loan_administration.customers))
 
-    # Todo: make sure works
     print("\n-------------––------------")
     print("Checking availability of the newly created Clash of Kings book item:")
     print("available:", library.loan_administration.check_available(book_item))
