@@ -14,8 +14,8 @@ class Library:
         self.catalog = Catalog()
         self.loan_administration = LoanAdministration()
 
-        # TODO: load books from json on startup
-        # TODO: load customers from csv on startup
+        self.catalog.load_books()
+        self.loan_administration.load_customers()
 
     def restore_from_backup(self):
         # Todo
@@ -138,3 +138,43 @@ class LoanItem:
 
 if __name__ == '__main__':
     library = Library()
+
+    # Todo: below only works if loading initial data from csv and json
+
+    # todo: make sure works
+    print("\n-------------––------------")
+    print("Make a customer load a book")
+    customer = library.loan_administration.customers[0]
+    book_item = library.catalog.book_items[5]
+    print("customer:", customer.get_full_name(), "book item:", book_item.book.title)
+    if library.loan_administration.loan_book(customer, book_item):
+        print("loaned: yes")
+    else:
+        print("loaned:no")
+    print("Try again, same items:")
+    if library.loan_administration.loan_book(customer, book_item):
+        print("loaned: yes")
+    else:
+        print("loaned:no")
+
+    # todo: make sure works
+    print("\n-------------––------------")
+    print("Search for an available book called ")  # todo: book name
+    results = library.catalog.search_books("")  # todo: book name
+    print("Found books:")
+    print("\n".join(book.title for book in results))
+
+    print("When searching again, book not found:")
+    results = library.catalog.search_books("")  # todo: book name
+    print("Found books:")
+    print("\n".join(book.title for book in results))
+
+    # Todo: write example of restoring & creating backups
+
+    # Todo: write example of adding book
+
+    # Todo: write example of adding book item
+
+    # Todo Write example of adding customer
+
+    # Todo: Write example of checking availability
