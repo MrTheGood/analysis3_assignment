@@ -68,8 +68,16 @@ class LoanAdministration:
         return customer
 
     def load_customers(self):
-        # todo: load customers from csv
-        pass
+        csv_reader = csv.reader(open(r"FakeNameSet20.csv", encoding='UTF-8'))
+        top_row = next(csv_reader)
+        for line in csv_reader:
+            kwargs = {top_row[i]: line[i] for i in range(0, len(top_row))
+                      if top_row[i] not in ["Number", "GivenName", "Surname"]}
+            self.add_customer(
+                line[top_row.index("GivenName")],
+                line[top_row.index("Surname")],
+                **kwargs
+            )
 
     def check_available(self, book_item):
         for item in self.loaned_items:
