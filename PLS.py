@@ -1,4 +1,4 @@
-import json, csv, datetime
+import json, csv
 
 
 class Library:
@@ -30,9 +30,20 @@ class Catalog:
         self.book_items = []
         self.books = []
 
-    # todo: load initial data or whatever from json
     def load_books(self):
-        pass
+        jsonbooklist = json.load(open(r'booksset1.json', encoding='UTF-8'))
+        for x in jsonbooklist:
+            name = x["author"]
+            author = Author(name.split(" ")[0], " ".join(name.split(" ")[1:]))
+            book = Book(x['title'], [author])
+
+            del x["title"]
+            del x["author"]
+
+            book_item = BookItem(book, **x)
+
+            self.books.append(book)
+            self.book_items.append(book_item)
 
     def add_book(self, title, authors):
         book = Book(
@@ -141,13 +152,11 @@ class LoanItem:
         self.id = Library.generate_id()
         self.book_item = book_item
         self.customer = customer
-        self.return_date = datetime.date.today() + datetime.timedelta(weeks=3)
 
 
 if __name__ == '__main__':
     library = Library()
 
-    # todo: make sure works
     print("\n-------------––------------")
     print("Make a customer load a book")
     customer = library.loan_administration.customers[0]
@@ -165,15 +174,15 @@ if __name__ == '__main__':
 
     # todo: make sure works
     print("\n-------------––------------")
-    print("Search for an available book called ")  # todo: book name
-    results = library.catalog.search_books("")  # todo: book name
+    print("Search for an available book called The Stranger")
+    results = library.catalog.search_books("The Stranger")
     print("Found books:")
-    print("\n".join(book.title for book in results))
+    print("\n".join(item.book.title for item in results))
 
     print("When searching again, book not found:")
-    results = library.catalog.search_books("")  # todo: book name
+    results = library.catalog.search_books("The Stranger")
     print("Found books:")
-    print("\n".join(book.title for book in results))
+    print("\n".join(item.book.title for item in results))
 
     # todo: make sure works
     print("\n-------------––------------")
