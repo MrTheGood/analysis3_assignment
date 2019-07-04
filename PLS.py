@@ -1,4 +1,4 @@
-import json, csv, datetime
+import json
 
 
 class Library:
@@ -114,18 +114,18 @@ class Author(Person):
 
 
 class Book:
-    def __init__(self, title, authors, **kwargs):
+    def __init__(self, title, authors):
         self.id = Library.generate_id()
         self.title = title
         self.authors = authors
-        for key in kwargs:
-            setattr(self, key, kwargs[key])
 
 
 class BookItem:
-    def __init__(self, book):
+    def __init__(self, book, **kwargs):
         self.id = Library.generate_id()
         self.book = book
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
 
 
 class LoanItem:
