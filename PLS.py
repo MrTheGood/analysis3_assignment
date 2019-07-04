@@ -60,11 +60,9 @@ class Catalog:
 
     def search_books(self, title):
         available_book_items = []
-        for book in self.books:
-            if title in book.title:
-                for item in self.book_items:
-                    if library.loan_administration.check_available(item):
-                        available_book_items.append(item)
+        for item in self.book_items:
+            if title in item.book.title and library.loan_administration.check_available(item):
+                available_book_items.append(item)
         return available_book_items
 
 
@@ -172,14 +170,8 @@ if __name__ == '__main__':
     else:
         print("Failed successfully")
 
-    # todo: make sure works
     print("\n-------------––------------")
     print("Search for an available book called The Stranger")
-    results = library.catalog.search_books("The Stranger")
-    print("Found books:")
-    print("\n".join(item.book.title for item in results))
-
-    print("When searching again, book not found:")
     results = library.catalog.search_books("The Stranger")
     print("Found books:")
     print("\n".join(item.book.title for item in results))
